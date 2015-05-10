@@ -7,7 +7,6 @@ import ipaddress
 from os import listdir
 import os
 from os.path import join
-import socket
 import sys
 
 __author__ = 'jorl17'
@@ -65,6 +64,8 @@ def check_static_ip(static_hostnames, ip):
             return static_host
 
     return ""
+
+#A Mariana é Linda!
 
 def add_static_ip(static_hostnames, ip, host):
     static_hostnames.append ( [ip, host] )
