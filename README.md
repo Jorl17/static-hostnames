@@ -118,7 +118,8 @@ Here are some examples of how to use static-hostnames. We show many different wa
     static-hostnames add 8.8.8.8 google-dns to default
     static-hostnames map 8.8.8.8 google-dns on default
 ###Add a mapping (to another preset)
-    _Note that you don't need to create presets. They're created for you when you add something to them_
+_Note that you don't need to create presets. They're created for you when you add something to them_
+
     static-hostnames -a 8.8.8.8 google-dns on alternative-dns
     static-hostnames add 8.8.8.8 google-dns on alternative-dns
 ###Delete a mapping (from the default preset)
