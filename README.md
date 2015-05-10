@@ -1,7 +1,37 @@
 # static-hostnames
  static-hostnames is a python 3 script that helps you manage /etc/hosts without explicitly editing it. It allows for static "host => ip" mappings to be made, as they would be made by manually editing /etc/hosts.  It extends this by adding the notion of presets, which are sets of mappings
 
-## Why use this if I can just edit /etc/hosts myself?
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [static-hostnames](#)
+    - [Why use this if I can just edit /etc/hosts myself?](#)
+    - [How does it really work?](#)
+    - [What Operating Systems does it work on?](#)
+    - [How do I install/uninstall it?](#)
+        - [Examples:](#)
+            - [Install](#)
+            - [Install to /usr/local prefix](#)
+            - [Uninstall](#)
+            - [Uninstall from /usr/local prefix](#)
+    - [The help command shows a bunch of commands! Why so many?](#)
+    - [I can't delete the default preset!](#)
+    - [Do I need to be root or does static-hostnames do it for me?](#)
+    - [Where does static-hostnames store its data? Is it by-user or for all users?](#)
+    - [Can I map the same host to different ips?](#)
+    - [Is there a port for Python 2?](#)
+    - [Example usage](#)
+        - [Add a mapping (to the default preset)](#)
+        - [Add a mapping (to another preset)](#)
+        - [Delete a mapping (from the default preset)](#)
+        - [Delete a preset (and all its mappings)](#)
+        - [List/Show all presets](#)
+        - [List/Show all active presets](#)
+        - [List/Show all static host mappings](#)
+        - [List/Show all active static host mappings](#)
+        - [Enable a preset](#)
+        - [Disable a preset](#)
+
+# Why use this if I can just edit /etc/hosts myself?
 Editing /etc/hosts can be tedious, so this tool makes it easier. If you want to add a mapping, just do
 
 ``static-hostnames -a <ip> <host>``
