@@ -532,7 +532,7 @@ def parse_cmd(s):
 
              'disable': cmd_disable,
              'deactivate': cmd_disable,
-             '-d': cmd_enable,
+             '-d': cmd_disable,
 
              'create': cmd_create_preset,
              '-c': cmd_create_preset,
