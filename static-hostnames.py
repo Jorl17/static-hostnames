@@ -3,11 +3,11 @@
 #
 from copy import deepcopy
 from genericpath import isfile
-import ipaddress
 from os import listdir
 import os
 from os.path import join
 import sys
+import socket
 
 __author__ = 'jorl17'
 PRESET_STRING = "### static-hostnames preset {:s} "
@@ -41,10 +41,15 @@ def ensure_crucial_files_exist():
 
 def is_ip(s):
     try:
-        ipaddress.ip_address(s)
+        socket.inet_aton(s)
+    except socket.error:
+        try:
+            socket.inet_pton(socket.AF_INET6, s)
+        except socket.error:
+            return False
         return True
-    except ValueError:
-        return False
+    return True
+
 
 def is_application_line(line):
     line = line.strip()
@@ -546,6 +551,7 @@ def parse_cmd(s):
         dict[s[0]](s[1:])
         ensure_preset_file_exists(DEFAULT_PRESET)
         rebuild_hosts_file()
+
 
 if __name__ == "__main__":
     if os.geteuid() != 0:
