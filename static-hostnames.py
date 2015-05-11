@@ -36,7 +36,7 @@ def ensure_crucial_files_exist():
         pass
     if not preset_exists(DEFAULT_PRESET):
         ensure_preset_file_exists(DEFAULT_PRESET)
-        activate_preset(DEFAULT_PRESET)
+    activate_preset(DEFAULT_PRESET)
 
 
 def is_ip(s):
