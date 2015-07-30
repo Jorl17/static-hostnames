@@ -111,8 +111,8 @@ def add_static_ip_to_preset(preset_name, ip, host):
     ensure_preset_file_exists(preset_name)
     preset = read_preset(preset_name)
     curr_host = check_static_ip(preset, ip)
-    if curr_host != "":
-        return "IP '" + ip + "' already assigned to '" + curr_host + "'"
+    #if curr_host != "":
+    #    return "IP '" + ip + "' already assigned to '" + curr_host + "'"
     add_static_ip(preset, ip, host)
     save_preset(preset_name, preset)
     return ""
