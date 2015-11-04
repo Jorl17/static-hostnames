@@ -333,6 +333,7 @@ def print_help_show():
     print('\tstatic-hostnames [show|list|-s|-l] presets                      Show all presets')
     print('\tstatic-hostnames [show|list|-s|-l] all maps                     Show all host => ip maps')
     print('\tstatic-hostnames [show|list|-s|-l] maps                         Show all host => ip maps')
+    print('\tstatic-hostnames [show|list|-s|-l] preset_name                  Show all maps in preset preset_name')
     print('\tstatic-hostnames [show|list|-s|-l] all                          Show all presets and maps')
     print('\tstatic-hostnames [show|list|-s|-l]                              Show all presets and maps')
 
@@ -392,6 +393,25 @@ def cmd_show(args, verbosity=False):
         cmd_show(['presets'])
         cmd_show(['maps'])
         return
+    elif len(args) == 0 or (len(args) == 1 and args[0] != 'all'):
+        #FIXME: This is really fugly but I just wanted to quickly hack it in. Sorry...
+        preset = args[0]
+        if preset_exists(preset):
+            preset_names, preset_data = load_all_presets()
+            for i in range(len(preset_names)):
+                if preset_names[i] == preset:
+                    print('Mappings in preset {}:'.format(preset))
+                    active_ips, active_hosts, active_origin = get_active_mappings()
+                    ips = []
+                    hosts = []
+                    for ip, host in preset_data[i]:
+                        ips.append(ip)
+                        hosts.append(host)
+                    print_mappings_with_active_info(ips, hosts, [preset]*len(preset_data[i]), active_origin, verbosity)
+                    return
+        else:
+            print('No such preset ({}).'.format(preset))
+            return
     elif len(args) != 2 or (args[1] != 'presets' and args[1] != 'maps') or (args[0] != 'active' and args[0] != 'all'):
         print('Invalid usage. Usage:')
         print_help_show()
