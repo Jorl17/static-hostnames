@@ -42,7 +42,7 @@ PRESETS_FOLDER="/etc/static-hostnames/presets/"
 DEFAULT_PRESET='default'
 HOSTS_FILE="/etc/hosts"
 
-VERSION='0.1'
+VERSION='0.2'
 
 def ensure_crucial_files_exist():
     try:
@@ -128,10 +128,27 @@ def del_static_ip_from_preset(preset_name, ip):
         else:
             return "No such ip in preset"
 
+def del_host_ip_from_preset(preset, host, ip):
+    if not preset_exists(preset):
+        return "No such preset"
+    else:
+        static_hostnames = read_preset(preset)
+        if del_static_ip_host(static_hostnames, host, ip):
+            save_preset(preset, static_hostnames)
+            return ""
+        else:
+            return "No such ip in preset"
 
 def del_static_ip(static_hostnames, ip):
     for index, [static_ip,static_host] in  enumerate(static_hostnames):
         if ip == static_ip:
+            static_hostnames.pop(index)
+            return True
+    return False
+
+def del_static_ip_host(static_hostnames, host, ip):
+    for index, [static_ip,static_host] in  enumerate(static_hostnames):
+        if ip == static_ip and host == static_host:
             static_hostnames.pop(index)
             return True
     return False
@@ -274,6 +291,10 @@ def del_static_ip_from_all_presets(ip):
     for preset in presets:
         del_static_ip_from_preset(preset, ip)
 
+def del_host_ip_from_all_presets(host, ip):
+    presets = get_presets(PRESETS_FOLDER)
+    for preset in presets:
+        del_host_ip_from_preset(preset, host, ip)
 
 def delete_all_presets():
     presets = get_presets(PRESETS_FOLDER)
@@ -321,6 +342,7 @@ def print_help_add():
     print('\tstatic-hostnames [add|map|-a|-m|-A] ip host                     Map host => ip in default preset')
 
 def print_help_del():
+    print('\tstatic-hostnames [del|-D] ip host from preset_name              Delete host => ip mappings from preset preset_name')
     print('\tstatic-hostnames [del|-D] ip from preset_name                   Delete ip mappings from preset preset_name')
     print('\tstatic-hostnames [del|-D] ip from all                           Delete ip mappings from all presets')
     print('\tstatic-hostnames [del|-D] ip                                    Delete ip mappings from default preset')
@@ -422,10 +444,12 @@ def cmd_add(args, verbosity=False):
     else:
         print('Error mapping {:s} to {:s} on preset {:s}: {:s}'.format(host, ip, preset, retstring))
 
+
 def cmd_del(args, verbosity=False):
     do_delete_preset = False
     delete_from_all_presets = False
     do_delete_all_presets = False
+    host = None
     if len(args) == 0:
         do_delete_preset = True
         do_delete_all_presets = True
@@ -444,6 +468,12 @@ def cmd_del(args, verbosity=False):
         if preset == 'all':
             delete_from_all_presets = True
         ip = args[0]
+    elif len(args) == 4 and args[2] == 'from':
+        preset = args[3]
+        if preset == 'all':
+            delete_from_all_presets = True
+        ip = args[1]
+        host = args[0]
     else:
         print('Invalid usage. Usage:')
         print_help_del()
@@ -462,15 +492,26 @@ def cmd_del(args, verbosity=False):
         return
     else:
         if delete_from_all_presets:
-            del_static_ip_from_all_presets(ip)
-            print('Deleted ' + ip + ' from all presets')
-        else:
-            retstring = del_static_ip_from_preset(preset, ip)
-
-            if retstring == "":
-                print('Deleted {:s} from preset {:s}'.format(ip, preset))
+            if host:
+                del_host_ip_from_all_presets(host, ip)
+                print('Deleted {}=>{} from all presets'.format(host,ip))
             else:
-                print('Error deleting {:s} from preset {:s}: {:s}'.format(ip, preset, retstring))
+                del_static_ip_from_all_presets(ip)
+                print('Deleted ' + ip + ' from all presets')
+        else:
+            if host:
+                retstring = del_host_ip_from_preset(preset, host, ip)
+                if retstring == "":
+                    print('Deleted {:s}=>{:s} from preset {:s}'.format(host, ip, preset))
+                else:
+                    print('Error deleting {:s}=>{:s} from preset {:s}: {:s}'.format(host, ip, preset, retstring))
+            else:
+                retstring = del_static_ip_from_preset(preset, ip)
+
+                if retstring == "":
+                    print('Deleted {:s} from preset {:s}'.format(ip, preset))
+                else:
+                    print('Error deleting {:s} from preset {:s}: {:s}'.format(ip, preset, retstring))
             return
 
 def cmd_enable(args, verbosity=False):
